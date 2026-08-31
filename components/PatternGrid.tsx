@@ -5,7 +5,7 @@ import { useIntakeStore } from "@/store/intake";
 
 function Scalp({ children }: { children: React.ReactNode }) {
   return (
-    <svg viewBox="0 0 80 80" className="h-16 w-16" aria-hidden>
+    <svg viewBox="0 0 80 80" className="h-16 w-16 md:h-[4.5rem] md:w-[4.5rem]" aria-hidden>
       <ellipse cx="40" cy="42" rx="26" ry="30" fill="#f4efe6" stroke="#2c4a3c" strokeWidth="2" />
       {children}
     </svg>
@@ -65,7 +65,7 @@ export function PatternGrid({
 }) {
   const t = copy(useIntakeStore((state) => state.lang));
   return (
-    <div className="grid grid-cols-2 gap-3">
+    <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
       {PATTERN_OPTIONS.map((pattern) => {
         const selected = value.includes(pattern);
         const copy = t.pattern[pattern];
@@ -75,7 +75,7 @@ export function PatternGrid({
             type="button"
             onClick={() => onToggle(pattern)}
             className={[
-              "flex min-h-[9.5rem] flex-col items-center justify-center gap-2 rounded-2xl border px-2 py-3 text-center transition-colors",
+              "flex min-h-[9.5rem] flex-col items-center justify-center gap-2 rounded-2xl border px-2 py-3 text-center transition-colors md:min-h-[10.5rem]",
               selected
                 ? "border-sage bg-sage-soft shadow-[inset_0_0_0_1px_var(--sage)]"
                 : "border-line bg-white/70 hover:border-sage-mid/40",

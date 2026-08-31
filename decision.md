@@ -18,11 +18,11 @@ The software still *helps*: unused products store as `used: false`, Q6 “doesn�
 
 ## LLM
 
-**Chose:** no model on the default path. Optional typed extract only on treatments (`POST /api/extract` → Zod patch → UI). Gemini never writes the store.
+**Chose:** no model on the default path. The form is complete without an LLM.
 
-**Skipped:** LLM-written summary, diagnosis, or a model that fills all 16.
+**Skipped:** LLM-written summary, diagnosis, or a model that fills all 16. Hair history is not a creative task. Hallucinated symptoms on a clinician note is a miss.
 
-Hair history is not a creative task. Hallucinated symptoms on a clinician note is a miss. If the patient would rather *type* “minoxidil foam eight months, itchy, three PRP,” we tick boxes — they still confirm. No `GEMINI_API_KEY` → taps still work. The form does not need an LLM to be complete.
+A `GEMINI_API_KEY` / `POST /api/extract` hook exists for an optional typed shortcut on treatments. **It was not configured or tested in this time window** — there wasn’t a strong reason to add a model to a tap-first clinic form. No key on the deploy. Taps always work.
 
 ## Microphone
 

@@ -35,7 +35,7 @@ import { HeaderLang } from "./LangSwitch";
 import { ProcedureMatrix, ProductMatrix, TypeTreatments } from "./Matrix";
 import { PatternGrid } from "./PatternGrid";
 import { Summary } from "./Summary";
-import { ChoiceButton, GhostButton, PrimaryButton, Question, Slide, YesNo } from "./ui";
+import { ChoiceButton, ChoiceStack, GhostButton, PrimaryButton, Question, Slide, YesNo } from "./ui";
 
 export function Wizard() {
   const stepId = useIntakeStore((state) => state.stepId);
@@ -74,13 +74,13 @@ export function Wizard() {
 
   return (
     <Shell>
-      <header className="no-print">
+      <header className="no-print sticky top-0 z-10 -mx-4 bg-paper/95 px-4 pb-2 pt-1 backdrop-blur-sm md:-mx-10 md:px-10">
         <div className="flex items-center gap-2">
           {current.id !== "welcome" ? (
             <button
               type="button"
               onClick={back}
-              className="grid h-9 w-9 shrink-0 place-items-center text-lg text-sage-mid"
+              className="grid h-11 w-11 shrink-0 place-items-center text-lg text-sage-mid"
               aria-label={t.back}
             >
               ←
@@ -133,7 +133,7 @@ export function Wizard() {
 function Shell({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-dvh justify-center">
-      <div className="phone-shell flex min-h-dvh w-full max-w-md flex-col bg-paper px-5 pt-5 pb-4 shadow-[0_0_80px_rgba(28,22,18,0.08)] sm:my-6 sm:min-h-[min(100dvh-3rem,860px)] sm:rounded-[2rem] sm:px-6 sm:pt-6 sm:pb-6">
+      <div className="phone-shell mx-auto flex min-h-dvh w-full max-w-lg flex-col bg-paper px-4 pt-[max(1rem,env(safe-area-inset-top))] pb-[max(1rem,env(safe-area-inset-bottom))] md:max-w-3xl md:px-10 md:pt-8 md:pb-10">
         {children}
       </div>
     </div>
@@ -210,7 +210,7 @@ function StepBody({
     case "q2":
       return (
         <Question kicker={t.q.q2.kicker} title={t.q.q2.title}>
-          <div className="flex flex-col gap-2">
+          <ChoiceStack cols={3}>
             {DURATION_OPTIONS.map((option) => (
               <ChoiceButton
                 key={option}
@@ -221,14 +221,14 @@ function StepBody({
                 {t.duration[option]}
               </ChoiceButton>
             ))}
-          </div>
+          </ChoiceStack>
         </Question>
       );
 
     case "q3":
       return (
         <Question kicker={t.q.q3.kicker} title={t.q.q3.title} hint={t.q.q3.hint}>
-          <div className="flex flex-col gap-2">
+          <ChoiceStack>
             {FAMILY_HISTORY_OPTIONS.map((option) => (
               <ChoiceButton
                 key={option}
@@ -243,7 +243,7 @@ function StepBody({
                 {t.family[option]}
               </ChoiceButton>
             ))}
-          </div>
+          </ChoiceStack>
           <div className="mt-auto pt-6">
             <PrimaryButton disabled={!complete} onClick={onNext}>
               {t.continue}
@@ -278,7 +278,7 @@ function StepBody({
     case "q5":
       return (
         <Question kicker={t.q.q5.kicker} title={t.q.q5.title} hint={t.q.q5.hint}>
-          <div className="flex flex-col gap-2">
+          <ChoiceStack>
             {CONDITION_OPTIONS.map((option) => (
               <ChoiceButton
                 key={option}
@@ -293,7 +293,7 @@ function StepBody({
                 {t.condition[option]}
               </ChoiceButton>
             ))}
-          </div>
+          </ChoiceStack>
           <div className="mt-auto pt-6">
             <PrimaryButton disabled={!complete} onClick={onNext}>
               {t.continue}
@@ -313,7 +313,7 @@ function StepBody({
           title={t.q.q6.title}
           hint={pcos ? t.q6pcos : t.q6hint}
         >
-          <div className="flex flex-col gap-2">
+          <ChoiceStack>
             {order.map((option) => (
               <ChoiceButton
                 key={option}
@@ -324,7 +324,7 @@ function StepBody({
                 {t.menstrual[option]}
               </ChoiceButton>
             ))}
-          </div>
+          </ChoiceStack>
         </Question>
       );
     }
@@ -332,7 +332,7 @@ function StepBody({
     case "q7":
       return (
         <Question kicker={t.q.q7.kicker} title={t.q.q7.title}>
-          <div className="flex flex-col gap-2">
+          <ChoiceStack>
             {(PREGNANCY_OPTIONS as readonly PregnancyRelated[]).map((option) => (
               <ChoiceButton
                 key={option}
@@ -343,7 +343,7 @@ function StepBody({
                 {t.pregnancy[option]}
               </ChoiceButton>
             ))}
-          </div>
+          </ChoiceStack>
         </Question>
       );
 
@@ -374,7 +374,7 @@ function StepBody({
     case "q10":
       return (
         <Question kicker={t.q.q10.kicker} title={t.q.q10.title} hint={t.q.q10.hint}>
-          <div className="flex flex-col gap-2">
+          <ChoiceStack>
             {TRIGGER_OPTIONS.map((option) => {
               const selected = answers.past_6_months?.includes(option) ?? false;
               return (
@@ -395,7 +395,7 @@ function StepBody({
                 </ChoiceButton>
               );
             })}
-          </div>
+          </ChoiceStack>
           <div className="mt-auto pt-6">
             <PrimaryButton
               onClick={() => {
@@ -524,7 +524,7 @@ function StepBody({
     case "q15":
       return (
         <Question kicker={t.q.q15.kicker} title={t.q.q15.title}>
-          <div className="flex flex-col gap-2">
+          <ChoiceStack cols={3}>
             {(SAMPLE_OPTIONS as readonly SampleType[]).map((option) => (
               <ChoiceButton
                 key={option}
@@ -536,7 +536,7 @@ function StepBody({
                 {t.sampleOpt[option]}
               </ChoiceButton>
             ))}
-          </div>
+          </ChoiceStack>
         </Question>
       );
 
@@ -569,33 +569,37 @@ function WelcomeScreen({
   const ready = lang !== null;
 
   return (
-    <div className="flex flex-1 flex-col gap-5">
-      <header className="space-y-2">
-        <p className="text-xs font-semibold tracking-[0.16em] text-sage-mid uppercase">
-          {t.welcomeKicker}
-        </p>
-        <h1
-          className={`${displayClass(lang)} text-[1.85rem] leading-[1.15] tracking-tight text-ink sm:text-[2.05rem]`}
-        >
-          {t.welcomeTitle}
-        </h1>
-        <p className="text-[1.05rem] leading-relaxed text-muted">{t.welcomeWhy}</p>
-      </header>
+    <div className="flex flex-1 flex-col gap-6 md:grid md:grid-cols-[minmax(0,1.2fr)_minmax(14rem,0.8fr)] md:items-stretch md:gap-12">
+      <div className="space-y-5">
+        <header className="space-y-2">
+          <p className="text-xs font-semibold tracking-[0.16em] text-sage-mid uppercase">
+            {t.welcomeKicker}
+          </p>
+          <h1
+            className={`${displayClass(lang)} text-[1.85rem] leading-[1.15] tracking-tight text-ink sm:text-[2.05rem] lg:text-[2.35rem]`}
+          >
+            {t.welcomeTitle}
+          </h1>
+          <p className="text-[1.05rem] leading-relaxed text-muted md:max-w-prose">
+            {t.welcomeWhy}
+          </p>
+        </header>
 
-      <ul className="space-y-2.5">
-        {t.welcomeBullets.map((bullet) => (
-          <li key={bullet} className="flex gap-3">
-            <span className="mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full bg-sage text-xs text-paper">
-              ✓
-            </span>
-            <span className="text-[1.02rem] leading-snug">{bullet}</span>
-          </li>
-        ))}
-      </ul>
+        <ul className="space-y-2.5">
+          {t.welcomeBullets.map((bullet) => (
+            <li key={bullet} className="flex gap-3">
+              <span className="mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full bg-sage text-xs text-paper">
+                ✓
+              </span>
+              <span className="text-[1.02rem] leading-snug">{bullet}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
 
-      <div className="mt-auto flex flex-col gap-3 pt-2">
+      <div className="mt-auto flex flex-col justify-end gap-3 pt-2 md:mt-0 md:justify-center">
         {!ready ? (
-          <p className="text-center text-sm text-muted">{t.langNeed}</p>
+          <p className="text-center text-sm text-muted md:text-left">{t.langNeed}</p>
         ) : null}
         <PrimaryButton disabled={!ready} onClick={onStart}>
           {t.start}

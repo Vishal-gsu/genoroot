@@ -31,7 +31,7 @@ export function Question({
           className={[
             displayClass(lang),
             "leading-[1.15] tracking-tight text-ink",
-            dense ? "text-[1.45rem] sm:text-[1.65rem]" : "text-[1.85rem] sm:text-[2.05rem]",
+            dense ? "text-[1.4rem] sm:text-[1.7rem] lg:text-[1.85rem]" : "text-[1.75rem] sm:text-[2.05rem] lg:text-[2.25rem]",
           ].join(" ")}
         >
           {title}
@@ -65,7 +65,7 @@ export function ChoiceButton({
       type="button"
       onClick={onClick}
       className={[
-        "w-full rounded-2xl border px-4 text-left transition-colors",
+        "h-full w-full rounded-2xl border px-4 text-left transition-colors",
         large ? "min-h-16 py-4" : "min-h-14 py-3.5",
         selected
           ? "border-sage bg-sage-soft text-ink shadow-[inset_0_0_0_1px_var(--sage)]"
@@ -181,6 +181,26 @@ export function YesNoSwitch({
   );
 }
 
+export function ChoiceStack({
+  children,
+  cols = 2,
+}: {
+  children: ReactNode;
+  cols?: 2 | 3;
+}) {
+  return (
+    <div
+      className={
+        cols === 3
+          ? "flex flex-col gap-2 md:grid md:grid-cols-3 md:gap-3"
+          : "flex flex-col gap-2 md:grid md:grid-cols-2 md:gap-3"
+      }
+    >
+      {children}
+    </div>
+  );
+}
+
 export function ChipWrap({ children }: { children: ReactNode }) {
   return <div className="flex flex-wrap gap-2">{children}</div>;
 }
@@ -199,7 +219,7 @@ export function Chip({
       type="button"
       onClick={onClick}
       className={[
-        "shrink-0 snap-start rounded-full border px-4 py-2.5 text-sm font-semibold whitespace-nowrap transition-colors",
+        "min-h-11 shrink-0 snap-start rounded-full border px-4 py-2.5 text-sm font-semibold whitespace-nowrap transition-colors",
         selected
           ? "border-sage bg-sage text-paper"
           : "border-line bg-white/80 text-ink hover:border-sage-mid/40",

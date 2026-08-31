@@ -93,7 +93,7 @@ export function Summary() {
 
   return (
       <div className="pb-6">
-      <article className="print-sheet a4-report overflow-visible rounded-3xl border border-line bg-white px-4 pt-5 pb-4 shadow-[0_12px_40px_rgba(44,74,60,0.08)] sm:px-5">
+      <article className="print-sheet a4-report overflow-visible rounded-3xl border border-line bg-white px-4 pt-5 pb-4 shadow-[0_12px_40px_rgba(44,74,60,0.08)] md:px-8 md:pt-7 md:pb-6">
         <header className="flex items-start justify-between gap-3 pb-3">
           <div>
             <p className="text-[0.7rem] font-semibold tracking-[0.18em] text-sage uppercase">

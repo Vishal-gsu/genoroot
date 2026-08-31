@@ -17,7 +17,7 @@ export function HeaderLang() {
             type="button"
             onClick={() => setLang(item.id as Lang)}
             className={[
-              "rounded-full px-2 py-1 text-[0.7rem] font-semibold tracking-wide transition-colors sm:px-2.5 sm:text-xs",
+              "min-h-11 min-w-11 rounded-full px-2.5 text-xs font-semibold tracking-wide transition-colors md:min-h-9 md:min-w-0 md:px-3 md:text-sm",
               selected ? "bg-sage text-paper" : "text-muted hover:text-ink",
             ].join(" ")}
           >

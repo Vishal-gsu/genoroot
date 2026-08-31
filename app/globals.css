@@ -36,9 +36,10 @@
 
 html,
 body {
-  background: #d9d0c3;
+  background: var(--paper);
   color: var(--ink);
   min-height: 100dvh;
+  overflow-x: hidden;
 }
 
 body {

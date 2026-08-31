@@ -25,7 +25,7 @@ export function HabitsList({
   const yn = { yesLabel: t.yes, noLabel: t.no };
 
   return (
-    <div className="flex flex-col gap-2.5">
+    <div className="flex flex-col gap-2.5 md:grid md:grid-cols-2">
       <HabitCard
         id="habit-smoke"
         title={t.habits.smoke[0]}
@@ -74,7 +74,7 @@ export function HabitsList({
         onChange={(hard_water) => set({ hard_water })}
       />
 
-      <div className="rounded-2xl border border-line bg-white px-3.5 py-3">
+      <div className="rounded-2xl border border-line bg-white px-3.5 py-3 md:col-span-2">
         <p className="text-[0.98rem] font-semibold">{t.habits.wash[0]}</p>
         <p className="mb-2.5 text-[0.8rem] leading-snug text-muted">{t.habits.wash[1]}</p>
         <ChipWrap>
