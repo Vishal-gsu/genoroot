@@ -31,7 +31,7 @@ export function Question({
           className={[
             displayClass(lang),
             "leading-[1.15] tracking-tight text-ink",
-            dense ? "text-[1.4rem] sm:text-[1.7rem] lg:text-[1.85rem]" : "text-[1.75rem] sm:text-[2.05rem] lg:text-[2.25rem]",
+            dense ? "text-[1.4rem] sm:text-[1.7rem] lg:text-[1.85rem]" : "text-[1.7rem] text-balance sm:text-[1.9rem] md:text-[2.05rem] lg:text-[2.15rem]",
           ].join(" ")}
         >
           {title}
@@ -142,7 +142,7 @@ export function YesNoSwitch({
       aria-labelledby={labelledBy}
       className={[
         "relative grid h-12 grid-cols-2 rounded-full bg-[#e4dbcf] p-1 shadow-inner",
-        full ? "w-full" : "w-[9.25rem] shrink-0",
+        full ? "w-full md:w-[9.25rem] md:shrink-0" : "w-[9.25rem] shrink-0",
       ].join(" ")}
     >
       {value !== undefined ? (

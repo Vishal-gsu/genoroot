@@ -58,7 +58,7 @@ export function ProductMatrix({
   return (
     <>
       <p className="text-sm text-muted">{t.q12hint}</p>
-      <div className="flex flex-col gap-2.5 md:grid md:grid-cols-2 md:items-start">
+      <div className="mx-auto flex w-full max-w-xl flex-col gap-2.5 md:max-w-2xl">
         {PRODUCT_KEYS.map((key) => {
           const row = value[key];
           const open = Boolean(row?.used);
@@ -221,7 +221,7 @@ export function ProcedureMatrix({
   return (
     <>
       <p className="text-sm text-muted">{t.q13hint}</p>
-      <div className="flex flex-col gap-2.5 md:grid md:grid-cols-2 md:items-start">
+      <div className="mx-auto flex w-full max-w-xl flex-col gap-2.5 md:max-w-2xl">
         {PROCEDURE_KEYS.map((key) => {
           const row = value[key];
           const open = Boolean(row?.done);

@@ -74,20 +74,30 @@ export function inferSideEffectsYesNo(
   return undefined;
 }
 
-/** One line per product note, e.g. "Minoxidil on the scalp — itchy". */
-export function composeSideEffectLines(answers: IntakeDraft): string[] {
+/** One line per product side-effect. Empty notes still keep the product name. */
+export function composeSideEffectLines(
+  answers: IntakeDraft,
+  options: { includeExtras?: boolean } = {},
+): string[] {
+  const includeExtras = options.includeExtras !== false;
   const lines: string[] = [];
   for (const key of PRODUCT_KEYS) {
     const row = answers.products?.[key];
     if (!row?.used || row.side_effects !== true) continue;
     const notes = (row.side_effect_notes ?? []).map((note) => note.trim()).filter(Boolean);
-    for (const note of notes) {
-      lines.push(`${PRODUCT_COPY[key]} — ${note}`);
+    if (notes.length > 0) {
+      for (const note of notes) {
+        lines.push(`${PRODUCT_COPY[key]} — ${note}`);
+      }
+    } else {
+      lines.push(PRODUCT_COPY[key]);
     }
   }
-  for (const extra of answers.extra_side_effects ?? []) {
-    const note = extra.trim();
-    if (note) lines.push(note);
+  if (includeExtras) {
+    for (const extra of answers.extra_side_effects ?? []) {
+      const note = extra.trim();
+      if (note) lines.push(note);
+    }
   }
   return lines;
 }
@@ -128,10 +138,15 @@ export function finalizeDraft(draft: IntakeDraft): unknown {
 
   const inferred = inferSideEffectsYesNo(draft);
   const past = draft.past_treatment_side_effects ?? inferred;
-  const fromNotes = composeSideEffectLines(draft).join("\n");
-  const describe = past
-    ? fromNotes || draft.describe?.trim() || undefined
-    : undefined;
+  const productLines = composeSideEffectLines(draft, { includeExtras: false });
+  const extraLines =
+    past === true
+      ? (draft.extra_side_effects ?? []).map((note) => note.trim()).filter(Boolean)
+      : [];
+  const describe =
+    [...productLines, ...extraLines].join("\n") ||
+    (past ? draft.describe?.trim() : undefined) ||
+    undefined;
 
   const { extra_side_effects: _extra, ...rest } = draft;
   return {

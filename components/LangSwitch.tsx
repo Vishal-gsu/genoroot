@@ -3,12 +3,12 @@
 import { LANGS, type Lang } from "@/lib/i18n";
 import { useIntakeStore } from "@/store/intake";
 
-export function HeaderLang() {
+export function HeaderLang({ className }: { className?: string }) {
   const lang = useIntakeStore((state) => state.lang);
   const setLang = useIntakeStore((state) => state.setLang);
 
   return (
-    <div className="flex items-center gap-0.5">
+    <div className={["flex items-center gap-0.5", className].filter(Boolean).join(" ")}>
       {LANGS.map((item) => {
         const selected = lang === item.id;
         return (

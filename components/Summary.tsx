@@ -29,6 +29,26 @@ export function Summary() {
     }).catch(() => undefined);
   }, [parsed.success]);
 
+  useEffect(() => {
+    if (!pendingPrint) return;
+    if (lang !== pendingPrint) return;
+    const id = window.setTimeout(() => {
+      const previous = document.title;
+      document.title = "GenoRoot-hair-scalp-note";
+      document.documentElement.classList.add("printing");
+      const done = () => {
+        document.documentElement.classList.remove("printing");
+        document.title = previous;
+        window.removeEventListener("afterprint", done);
+      };
+      window.addEventListener("afterprint", done);
+      window.print();
+      window.setTimeout(done, 1000);
+      setPendingPrint(null);
+    }, 80);
+    return () => window.clearTimeout(id);
+  }, [lang, pendingPrint]);
+
   if (!parsed.success) {
     return (
       <div className="space-y-4">
@@ -60,16 +80,6 @@ export function Summary() {
     window.print();
     window.setTimeout(done, 1000);
   }
-
-  useEffect(() => {
-    if (!pendingPrint) return;
-    if (lang !== pendingPrint) return;
-    const id = window.setTimeout(() => {
-      runPrint();
-      setPendingPrint(null);
-    }, 80);
-    return () => window.clearTimeout(id);
-  }, [lang, pendingPrint]);
 
   function chooseDownloadLang(next: Lang) {
     setPickLang(false);
@@ -112,90 +122,94 @@ export function Summary() {
         </header>
 
         <div className="print-body space-y-4 pt-1">
-          <div className="print-span-2 grid grid-cols-2 gap-2">
-            <Stat tone="sage" label={r.onset} value={`${data.age_hair_loss_began}`} />
-            <Stat tone="gold" label={r.lasting} value={t.duration[data.duration]} />
-            <Stat tone="sky" label={r.sample} value={t.sampleOpt[data.sample_type]} />
+          <div className="print-span-2 grid grid-cols-2 gap-2 md:grid-cols-4">
+            <Stat label={r.onset} value={`${data.age_hair_loss_began}`} />
+            <Stat label={r.lasting} value={t.duration[data.duration]} />
+            <Stat label={r.sample} value={t.sampleOpt[data.sample_type]} />
             <Stat
-              tone={data.consent ? "sage" : "warn"}
               label={r.consent}
               value={data.consent ? r.consented : r.declined}
+              alert={!data.consent}
             />
           </div>
 
           <div className="grid gap-3 sm:grid-cols-2">
-            <Card tone="sage" title={r.pattern}>
-              <Pills
-                items={data.pattern.map((item) => t.pattern[item].title)}
-                tone="sage"
-              />
+            <Card title={r.pattern}>
+              <Pills items={data.pattern.map((item) => t.pattern[item].title)} />
             </Card>
-            <Card tone="gold" title={r.family}>
-              <Pills
-                items={data.family_history.map((item) => t.family[item])}
-                tone="gold"
-              />
+            <Card title={r.family}>
+              <Pills items={data.family_history.map((item) => t.family[item])} />
             </Card>
           </div>
 
           <div className="grid gap-3 sm:grid-cols-2">
-          <Card tone="sky" title={r.health}>
-            <Pills
-              items={data.diagnosed_conditions.map((item) => t.condition[item])}
-              tone="sky"
-            />
-            <p className="mt-2.5 text-sm leading-snug">
-              <span className="text-muted">{r.hormones}: </span>
-              {t.menstrual[data.menstrual_cycle]}
-              {data.pregnancy_related !== "Not applicable"
-                ? ` · ${t.pregnancy[data.pregnancy_related]}`
-                : ""}
-            </p>
-            <p className="mt-1 text-sm leading-snug">
-              {r.skin}: {data.adult_acne_oily_skin ? t.yes : t.no}
-              {" · "}
-              {r.bodyHair}: {data.excess_body_facial_hair ? t.yes : t.no}
-            </p>
+          <Card title={r.health}>
+            <Pills items={data.diagnosed_conditions.map((item) => t.condition[item])} />
+            <div className="mt-2">
+              <Fact
+                label={r.hormones}
+                value={
+                  data.pregnancy_related !== "Not applicable"
+                    ? `${t.menstrual[data.menstrual_cycle]}\n${t.pregnancy[data.pregnancy_related]}`
+                    : t.menstrual[data.menstrual_cycle]
+                }
+              />
+              <Fact label={r.skin} value={data.adult_acne_oily_skin ? t.yes : t.no} />
+              <Fact
+                label={r.bodyHair}
+                value={data.excess_body_facial_hair ? t.yes : t.no}
+              />
+            </div>
           </Card>
 
-          <Card tone="gold" title={r.lifestyle}>
-            <p className="text-sm leading-snug">
-              <span className="text-muted">{r.last6}: </span>
-              {data.past_6_months.length
-                ? data.past_6_months.map((item) => t.trigger[item]).join(" · ")
-                : r.noneListed}
+          <Card title={r.lifestyle}>
+            <p className="text-[0.68rem] font-semibold tracking-[0.12em] text-sage uppercase">
+              {r.last6}
             </p>
-            <ul className="mt-2 grid grid-cols-2 gap-x-3 gap-y-1 text-sm">
-              <li>
-                {t.habits.smoke[0]}:{" "}
-                {data.habits.smoking
-                  ? t.smoking[data.habits.smoking_severity ?? "Mild <5/day"]
-                  : t.no}
-              </li>
-              <li>
-                {t.habits.alcohol[0]}: {data.habits.alcohol ? t.yes : t.no}
-              </li>
-              <li>
-                {t.habits.water[0]}: {data.habits.hard_water ? t.yes : t.no}
-              </li>
-              <li>
-                {t.habits.wash[0]}: {t.wash[data.habits.hair_wash_frequency]}
-              </li>
-              <li>
-                {t.habits.heat[0]}: {data.habits.heating_tools_styling_chemicals ? t.yes : t.no}
-              </li>
-              <li>
-                {t.habits.salon[0]}:{" "}
-                {data.habits.salon_treatments
-                  ? data.habits.salon_treatment_detail || t.yes
-                  : t.no}
-              </li>
-            </ul>
+            {data.past_6_months.length ? (
+              <ul className="mt-1.5 space-y-1">
+                {data.past_6_months.map((item) => (
+                  <li key={item} className="text-sm leading-snug">
+                    {t.trigger[item]}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="mt-1.5 text-sm text-muted">{r.noneListed}</p>
+            )}
+            <div className="mt-3 border-t border-line pt-1">
+              <Fact
+                label={t.habits.smoke[0]}
+                value={
+                  data.habits.smoking
+                    ? t.smoking[data.habits.smoking_severity ?? "Mild <5/day"]
+                    : t.no
+                }
+              />
+              <Fact label={t.habits.alcohol[0]} value={data.habits.alcohol ? t.yes : t.no} />
+              <Fact label={t.habits.water[0]} value={data.habits.hard_water ? t.yes : t.no} />
+              <Fact
+                label={t.habits.wash[0]}
+                value={t.wash[data.habits.hair_wash_frequency]}
+              />
+              <Fact
+                label={t.habits.heat[0]}
+                value={data.habits.heating_tools_styling_chemicals ? t.yes : t.no}
+              />
+              <Fact
+                label={t.habits.salon[0]}
+                value={
+                  data.habits.salon_treatments
+                    ? data.habits.salon_treatment_detail || t.yes
+                    : t.no
+                }
+              />
+            </div>
           </Card>
           </div>
 
           <div className="grid gap-3 sm:grid-cols-2">
-          <Card tone="sage" title={r.usedNow}>
+          <Card title={r.usedNow}>
             {usedProducts.length === 0 ? (
               <p className="text-sm text-muted">{r.noneTried}</p>
             ) : (
@@ -216,7 +230,7 @@ export function Summary() {
             )}
           </Card>
 
-          <Card tone="sky" title={r.inClinic}>
+          <Card title={r.inClinic}>
             {doneProcs.length === 0 ? (
               <p className="text-sm text-muted">{r.noneTried}</p>
             ) : (
@@ -241,11 +255,11 @@ export function Summary() {
           </div>
 
           <div className="print-span-2">
-          <Card tone={data.past_treatment_side_effects ? "warn" : "sage"} title={r.sides}>
-            {data.past_treatment_side_effects ? (
-              <p className="whitespace-pre-line text-sm leading-relaxed">
-                {data.describe?.trim() || t.yes}
-              </p>
+          <Card title={r.sides} alert={Boolean(data.describe?.trim() || data.past_treatment_side_effects)}>
+            {data.describe?.trim() ? (
+              <p className="whitespace-pre-line text-sm leading-relaxed">{data.describe.trim()}</p>
+            ) : data.past_treatment_side_effects ? (
+              <p className="text-sm leading-relaxed">{t.yes}</p>
             ) : (
               <p className="text-sm text-muted">{r.noSides}</p>
             )}
@@ -278,70 +292,66 @@ export function Summary() {
 function Stat({
   label,
   value,
-  tone,
+  alert,
 }: {
   label: string;
   value: string;
-  tone: "sage" | "gold" | "sky" | "warn";
+  alert?: boolean;
 }) {
-  const wrap = {
-    sage: "border-sage/20 bg-sage-soft/80",
-    gold: "border-gold/25 bg-gold-soft",
-    sky: "border-sky/20 bg-sky-soft",
-    warn: "border-warn/30 bg-warn/10",
-  }[tone];
-  const labelColor = {
-    sage: "text-sage-mid",
-    gold: "text-gold",
-    sky: "text-sky",
-    warn: "text-warn",
-  }[tone];
   return (
-    <div className={`rounded-2xl border px-3 py-2.5 ${wrap}`}>
-      <p className={`text-[0.62rem] font-semibold tracking-wide uppercase ${labelColor}`}>{label}</p>
-      <p className="mt-0.5 text-sm font-semibold leading-snug text-ink">{value}</p>
+    <div className="rounded-2xl border border-line bg-paper/40 px-3 py-2.5">
+      <p className="text-[0.62rem] font-semibold tracking-wide text-sage uppercase">{label}</p>
+      <p
+        className={`mt-0.5 text-sm font-semibold leading-snug ${alert ? "text-warn" : "text-ink"}`}
+      >
+        {value}
+      </p>
     </div>
   );
 }
 
 function Card({
   title,
-  tone,
   children,
+  alert,
 }: {
   title: string;
-  tone: "sage" | "gold" | "sky" | "warn";
   children: React.ReactNode;
+  alert?: boolean;
 }) {
-  const bar = {
-    sage: "bg-sage",
-    gold: "bg-gold",
-    sky: "bg-sky",
-    warn: "bg-warn",
-  }[tone];
   return (
-    <section className="overflow-hidden rounded-2xl border border-line bg-paper/50 print:break-inside-avoid">
-      <div className="flex items-center gap-2 px-3.5 py-2">
-        <span className={`h-2 w-2 shrink-0 rounded-full ${bar}`} />
-        <h2 className="text-[0.68rem] font-semibold tracking-[0.14em] text-muted uppercase">
+    <section className="overflow-hidden rounded-2xl border border-line bg-white print:break-inside-avoid">
+      <div className="border-b border-line bg-paper/50 px-3.5 py-2">
+        <h2
+          className={`text-[0.68rem] font-semibold tracking-[0.14em] uppercase ${alert ? "text-warn" : "text-sage"}`}
+        >
           {title}
         </h2>
       </div>
-      <div className="border-t border-line/80 bg-white px-3.5 py-3 text-ink">{children}</div>
+      <div className="px-3.5 py-3 text-ink">{children}</div>
     </section>
   );
 }
 
-function Pills({ items, tone }: { items: string[]; tone: "sage" | "gold" | "sky" }) {
-  const cls = {
-    sage: "bg-sage-soft text-sage",
-    gold: "bg-gold-soft text-gold",
-    sky: "bg-sky-soft text-sky",
-  }[tone];
+function Fact({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex items-start justify-between gap-4 border-b border-line/80 py-2 last:border-b-0 last:pb-0">
+      <span className="text-[0.8rem] leading-snug text-muted">{label}</span>
+      <span className="max-w-[58%] whitespace-pre-line text-right text-[0.8rem] font-medium leading-snug text-ink">
+        {value}
+      </span>
+    </div>
+  );
+}
+
+function Pills({ items }: { items: string[] }) {
   return (
     <div className="flex flex-wrap gap-1.5">
       {items.map((item) => (
-        <span key={item} className={`rounded-full px-2.5 py-1 text-xs font-semibold ${cls}`}>
+        <span
+          key={item}
+          className="rounded-full bg-paper-deep px-2.5 py-1 text-xs font-semibold text-ink"
+        >
           {item}
         </span>
       ))}

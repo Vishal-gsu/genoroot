@@ -74,7 +74,7 @@ export function Wizard() {
 
   return (
     <Shell>
-      <header className="no-print sticky top-0 z-10 -mx-4 bg-paper/95 px-4 pb-2 pt-1 backdrop-blur-sm md:-mx-10 md:px-10">
+      <header className="no-print sticky top-0 z-10 -mx-4 bg-paper/95 px-4 pb-2 pt-1 backdrop-blur-sm md:-mx-10 md:px-10 lg:-mx-14 lg:px-14">
         <div className="flex items-center gap-2">
           {current.id !== "welcome" ? (
             <button
@@ -89,7 +89,7 @@ export function Wizard() {
           <p className="min-w-0 flex-1 text-[0.8rem] font-semibold tracking-[0.16em] text-sage uppercase">
             {t.clinic}
           </p>
-          <HeaderLang />
+          {current.id !== "welcome" ? <HeaderLang /> : null}
         </div>
         {current.section ? (
           <div className="mt-3">
@@ -133,7 +133,7 @@ export function Wizard() {
 function Shell({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-dvh justify-center">
-      <div className="phone-shell mx-auto flex min-h-dvh w-full max-w-lg flex-col bg-paper px-4 pt-[max(1rem,env(safe-area-inset-top))] pb-[max(1rem,env(safe-area-inset-bottom))] md:max-w-3xl md:px-10 md:pt-8 md:pb-10">
+      <div className="phone-shell mx-auto flex min-h-dvh w-full max-w-lg flex-col bg-paper px-4 pt-[max(1rem,env(safe-area-inset-top))] pb-[max(1rem,env(safe-area-inset-bottom))] md:max-w-4xl md:px-10 md:pt-8 md:pb-10 lg:max-w-5xl lg:px-14">
         {children}
       </div>
     </div>
@@ -166,7 +166,7 @@ function StepBody({
     if (current.past_treatment_side_effects === undefined && inferred !== undefined) {
       patch.past_treatment_side_effects = inferred;
     }
-    const fromProducts = composeSideEffectLines({ ...current, extra_side_effects: [] });
+    const fromProducts = composeSideEffectLines(current, { includeExtras: false });
     const yes = (patch.past_treatment_side_effects ?? current.past_treatment_side_effects) === true;
     if (yes && fromProducts.length === 0 && !current.extra_side_effects?.length) {
       patch.extra_side_effects = [""];
@@ -450,21 +450,18 @@ function StepBody({
     case "q14": {
       const inferred = inferSideEffectsYesNo(answers);
       const value = answers.past_treatment_side_effects;
-      const fromProducts = composeSideEffectLines({
-        ...answers,
-        extra_side_effects: [],
-      });
+      const fromProducts = composeSideEffectLines(answers, { includeExtras: false });
       const extras = answers.extra_side_effects ?? [];
-      const title =
+      const hint =
         fromProducts.length > 0
           ? t.q14fromProducts
           : inferred === true
             ? t.q14marked
             : inferred === false
               ? t.q14none
-              : t.q14ask;
+              : t.q14optional;
       return (
-        <Question kicker={t.q.q14.kicker} title={title} hint={t.q14optional}>
+        <Question kicker={t.q.q14.kicker} title={t.q.q14.title} hint={hint}>
           <YesNo
             value={value}
             yes={t.yes}
@@ -476,20 +473,20 @@ function StepBody({
               });
             }}
           />
+          {fromProducts.length > 0 ? (
+            <ul className="space-y-2">
+              {fromProducts.map((line) => (
+                <li
+                  key={line}
+                  className="rounded-2xl border border-line bg-paper/80 px-4 py-3 text-[1.02rem] leading-snug"
+                >
+                  {line}
+                </li>
+              ))}
+            </ul>
+          ) : null}
           {value ? (
             <div className="space-y-3">
-              {fromProducts.length > 0 ? (
-                <ul className="space-y-2">
-                  {fromProducts.map((line) => (
-                    <li
-                      key={line}
-                      className="rounded-2xl border border-sage/20 bg-sage-soft/50 px-4 py-3 text-[1.02rem] leading-snug"
-                    >
-                      {line}
-                    </li>
-                  ))}
-                </ul>
-              ) : null}
               {extras.map((note, index) => (
                 <input
                   key={index}
@@ -569,23 +566,23 @@ function WelcomeScreen({
   const ready = lang !== null;
 
   return (
-    <div className="flex flex-1 flex-col gap-6 md:grid md:grid-cols-[minmax(0,1.2fr)_minmax(14rem,0.8fr)] md:items-stretch md:gap-12">
-      <div className="space-y-5">
+    <div className="flex flex-1 flex-col">
+      <div className="mx-auto w-full max-w-md space-y-5 text-center md:max-w-3xl lg:max-w-4xl">
         <header className="space-y-2">
           <p className="text-xs font-semibold tracking-[0.16em] text-sage-mid uppercase">
             {t.welcomeKicker}
           </p>
           <h1
-            className={`${displayClass(lang)} text-[1.85rem] leading-[1.15] tracking-tight text-ink sm:text-[2.05rem] lg:text-[2.35rem]`}
+            className={`${displayClass(lang)} text-[1.7rem] leading-[1.2] tracking-tight text-balance text-ink md:text-[clamp(1.7rem,2.4vw,2.35rem)] md:whitespace-nowrap md:leading-tight`}
           >
             {t.welcomeTitle}
           </h1>
-          <p className="text-[1.05rem] leading-relaxed text-muted md:max-w-prose">
+          <p className="mx-auto max-w-xl text-[1.05rem] leading-relaxed text-muted md:max-w-2xl">
             {t.welcomeWhy}
           </p>
         </header>
 
-        <ul className="space-y-2.5">
+        <ul className="mx-auto max-w-sm space-y-2.5 text-left">
           {t.welcomeBullets.map((bullet) => (
             <li key={bullet} className="flex gap-3">
               <span className="mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full bg-sage text-xs text-paper">
@@ -597,10 +594,9 @@ function WelcomeScreen({
         </ul>
       </div>
 
-      <div className="mt-auto flex flex-col justify-end gap-3 pt-2 md:mt-0 md:justify-center">
-        {!ready ? (
-          <p className="text-center text-sm text-muted md:text-left">{t.langNeed}</p>
-        ) : null}
+      <div className="mx-auto mt-auto flex w-full max-w-sm flex-col items-center gap-3 pt-10">
+        <HeaderLang className="justify-center" />
+        {!ready ? <p className="text-center text-sm text-muted">{t.langNeed}</p> : null}
         <PrimaryButton disabled={!ready} onClick={onStart}>
           {t.start}
         </PrimaryButton>

@@ -25,7 +25,7 @@ export function HabitsList({
   const yn = { yesLabel: t.yes, noLabel: t.no };
 
   return (
-    <div className="flex flex-col gap-2.5 md:grid md:grid-cols-2">
+    <div className="mx-auto flex w-full max-w-xl flex-col gap-2.5 md:max-w-2xl">
       <HabitCard
         id="habit-smoke"
         title={t.habits.smoke[0]}
@@ -74,7 +74,7 @@ export function HabitsList({
         onChange={(hard_water) => set({ hard_water })}
       />
 
-      <div className="rounded-2xl border border-line bg-white px-3.5 py-3 md:col-span-2">
+      <div className="rounded-2xl border border-line bg-white px-3.5 py-3">
         <p className="text-[0.98rem] font-semibold">{t.habits.wash[0]}</p>
         <p className="mb-2.5 text-[0.8rem] leading-snug text-muted">{t.habits.wash[1]}</p>
         <ChipWrap>
@@ -155,11 +155,15 @@ function HabitCard({
         value === true ? "border-sage/35" : "border-line",
       ].join(" ")}
     >
-      <p id={id} className="text-[0.98rem] font-semibold leading-tight">
-        {title}
-      </p>
-      <p className="mb-2.5 mt-0.5 text-[0.8rem] leading-snug text-muted">{hint}</p>
-      <YesNoSwitch labelledBy={id} value={value} onChange={onChange} full {...yn} />
+      <div className="flex flex-col gap-2.5 md:flex-row md:items-center md:justify-between md:gap-6">
+        <div className="min-w-0">
+          <p id={id} className="text-[0.98rem] font-semibold leading-tight">
+            {title}
+          </p>
+          <p className="mt-0.5 text-[0.8rem] leading-snug text-muted">{hint}</p>
+        </div>
+        <YesNoSwitch labelledBy={id} value={value} onChange={onChange} full {...yn} />
+      </div>
       {children}
     </div>
   );
