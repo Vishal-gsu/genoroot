@@ -52,9 +52,3 @@ Welcome → **See a sample** jumps to a made-up completed note.
 | Art | Hand-drawn SVG scalp diagrams | No stock photos of scalps |
 
 There is **no separate backend**. `POST /api/submit` validates and logs. `POST /api/extract` is optional Gemini. Patient data is not stored.
-
-## Submit (Haiku Studio)
-
-- Live link (Vercel)
-- This repo — invite `nikhil@thevectorlabs.in`
-- 2-minute screen recording
