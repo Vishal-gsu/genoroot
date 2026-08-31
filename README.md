@@ -6,7 +6,7 @@ English / हिंदी / Hinglish in the header. No login, no database — an
 
 **Why taps, not a chatbot, not a default LLM:** [decision.md](./decision.md)
 
-Live: *(paste Vercel URL after deploy)*
+Live: *(https://genoroot-inky.vercel.app)*
 
 ## Run
 
