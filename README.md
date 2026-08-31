@@ -1,7 +1,7 @@
 # GenoRoot — hair & scalp intake
 
-Clinic waiting-room intake for [GenoRoot](https://github.com/Vishal-gsu/genoroot). One question at a time. The software infers what it can; the patient confirms. The last screen is a one-page doctor note (**Download**, pick a language) plus **Copy JSON** for the 16 fields.
-[Vercel](https://genoroot-inky.vercel.app).
+Clinic waiting-room intake for [GenoRoot](https://github.com/Vishal-gsu/genoroot) [Vercel](https://genoroot-inky.vercel.app). One question at a time. The software infers what it can; the patient confirms. The last screen is a one-page doctor note (**Download**, pick a language) plus **Copy JSON** for the 16 fields.
+.
 English / हिंदी / Hinglish in the header. No login, no database — answers stay on the phone until they download or copy.
 
 **Why taps, not a chatbot, not a default LLM:** [decision.md](./decision.md)
